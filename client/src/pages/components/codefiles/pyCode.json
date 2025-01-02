@@ -1,32 +1,8 @@
 [
   [
     {
-      "id": "15. 3Sum",
-      "code": "class Solution:\n    def threeSum(self, nums):\n        res = []\n        nums.sort()\n\n        for i, a in enumerate(nums):\n\n            if i>0 and nums[i] == nums[i-1]:\n                continue\n\n            l, r = i+1, len(nums)-1\n            while l<r:\n                total = a + nums[l] + nums[r]\n\n                if total > 0:\n                    r = r-1\n                elif total < 0:\n                    l = l+1\n                else:\n                    res.append([a, nums[l], nums[r]])\n                    r = r-1\n                    l = l+1\n\n                    while l < r and nums[l] == nums[l-1]:\n                        l += 1\n\n        return res\n"
-    }
-  ],
-  [
-    {
-      "id": "36. Valid Sudoku",
-      "code": "class Solution:\n    def isValidSudoku(self, board: List[List[str]]) -> bool:\n        rows = defaultdict(list)\n        cols = defaultdict(list)\n        rects = defaultdict(list)\n\n        R = len(board)\n        C = len(board[0])\n\n        for i in range(R):\n            for j in range(C):\n                if board[i][j] == \".\":\n                    continue\n\n                val = board[i][j]\n                if val in rows[i]:\n                    return False\n                rows[i].append(val)\n\n                if val in cols[j]:\n                    return False\n\n                cols[j].append(val)\n\n                if val in rects[(i//3, j//3)]:\n                    return False\n\n                rects[(i//3, j//3)].append(val)\n\n        return True\n"
-    }
-  ],
-  [
-    {
-      "id": "207. Course Schedule",
-      "code": "class Solution:\n    def canFinish(self, numCourses, prerequisites):\n        indegree = [0] * numCourses\n        adj = [[] for i in range(numCourses)]\n        for src, dst in prerequisites:\n            indegree[dst] += 1\n            adj[src].append(dst)\n\n        q = deque()\n        for n in range(numCourses):\n            if indegree[n] == 0:\n                q.append(n)\n\n        finish = 0\n        while q:\n            node = q.popleft()\n            finish += 1\n            for nei in adj[node]:\n                indegree[nei] -= 1\n                if indegree[nei] == 0:\n                    q.append(nei)\n\n        return finish == numCourses\n"
-    }
-  ],
-  [
-    {
-      "id": "51. N-queens",
-      "code": "class Solution:\n    def solveNQueens(self, n: int) -> List[List[str]]:\n        res = []\n        board = [[\".\"] * n for i in range(n)]\n\n        def backtrack(r):\n            if r == n:\n                copy = [\"\".join(row) for row in board]\n                res.append(copy)\n                return\n\n            for c in range(n):\n                if self.isSafe(r, c, board):\n                    board[r][c] = 'Q'\n                    backtrack(r+1)\n                    board[r][c] = '.'\n\n        backtrack(0)\n        return res\n\n    def isSafe(self, r: int, c: int, board):\n        row = r - 1\n        while row >= 0:\n            if board[row][c] == \"Q\":\n                return False\n            row -= 1\n            \n        row, col = r - 1, c - 1\n        while row >= 0 and col >= 0:\n            if board[row][col] == \"Q\":\n                return False\n            row -= 1\n            col -= 1\n\n        row, col = r - 1, c + 1\n        while row >= 0 and col < len(board):\n            if board[row][col] == \"Q\":\n                return False\n            row -= 1\n            col += 1\n        return True\n"
-    }
-  ],
-  [
-    {
       "id": "200. Number of Islands",
-      "code": "class Solution:\n    def countPaths(self, grid):\n        ROWS, COLS = len(grid), len(grid[0])\n\n        def helper(grid, r, c, visit) -> int:\n            if (min(r, c) < 0 or\n                r == ROWS or c == COLS or\n                (r, c) in visit or grid[r][c] == 1):\n                return 0\n            if r == ROWS - 1 and c == COLS - 1:\n                return 1\n\n            visit.add((r, c))\n\n            count = 0\n            count += helper(grid, r + 1, c, visit)\n            count += helper(grid, r - 1, c, visit)\n            count += helper(grid, r, c + 1, visit)\n            count += helper(grid, r, c - 1, visit)\n\n            visit.remove((r, c))\n            return count\n\n        return helper(grid, 0, 0, set())\n"
+      "code": "class Solution:\n    def numIslands(self, grid):\n        directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]\n        ROWS, COLS = len(grid), len(grid[0])\n        islands = 0\n\n        def dfs(r, c):\n            if min(c, r) < 0 or r >= ROWS or c >= COLS or grid[r][c] == \"0\":\n                return\n\n            grid[r][c] = \"0\"\n            for dr, dc in directions:\n                dfs(r + dr, c + dc)\n\n        for r in range(ROWS):\n            for c in range(COLS):\n                if grid[r][c] == \"1\":\n                    dfs(r, c)\n                    islands += 1\n\n        return islands\n"
     }
   ],
   [
@@ -37,8 +13,26 @@
   ],
   [
     {
-      "id": "703. Kth Largest Element in a Stream",
-      "code": "class Heap:\n    def __init__(self, nums):\n        self.nums = []\n        for n in nums:\n            self.insert(n)\n    \n    def pop(self):\n        if len(self.nums) == 0:\n            return None\n\n        if len(self.nums) == 1:\n            return self.nums.pop()\n\n        min = self.nums[0]\n        self.nums[0] = self.nums.pop()\n        self.swimDown(0)\n\n        return min\n\n    def insert(self, val):\n        self.nums.append(val)\n        last = len(self.nums) - 1\n        self.swimUp(last)\n\n    def swimUp(self, i):\n        parent = (i - 1) // 2\n\n        if i > 0 and self.nums[parent] > self.nums[i]:\n            self.nums[parent], self.nums[i] = self.nums[i], self.nums[parent]\n            self.swimUp(parent)\n    \n    def swimDown(self, i):\n        left = i * 2 + 1\n        right = i * 2 + 2\n        min = i\n\n        if left < len(self.nums) and self.nums[left] < self.nums[min]:\n            min = left\n\n        if right < len(self.nums) and self.nums[right] < self.nums[min]:\n            min = right\n        \n        if min != i:\n            self.nums[i], self.nums[min] = self.nums[min], self.nums[i]\n            self.swimDown(min)\n\n    def peek(self):\n        return self.nums[0]\n\nclass KthLargest:\n    def __init__(self, k: int, nums: List[int]):\n        self.nums = nums\n        self.heap = Heap(self.nums)\n        print(f\"{self.heap.nums}\")\n        self.cap = k\n\n    def add(self, val: int) -> int:\n        self.heap.insert(val)\n        while len(self.heap.nums) > self.cap:\n            self.heap.pop()\n\n        return self.heap.peek()\n"
+      "id": "207. Course Schedule",
+      "code": "class Solution:\n    def canFinish(self, numCourses, prerequisites):\n        indegree = [0] * numCourses\n        adj = [[] for i in range(numCourses)]\n        for src, dst in prerequisites:\n            indegree[dst] += 1\n            adj[src].append(dst)\n\n        q = deque()\n        for n in range(numCourses):\n            if indegree[n] == 0:\n                q.append(n)\n\n        finish = 0\n        while q:\n            node = q.popleft()\n            finish += 1\n            for nei in adj[node]:\n                indegree[nei] -= 1\n                if indegree[nei] == 0:\n                    q.append(nei)\n\n        return finish == numCourses\n"
+    }
+  ],
+  [
+    {
+      "id": "15. 3Sum",
+      "code": "class Solution:\n    def threeSum(self, nums):\n        res = []\n        nums.sort()\n\n        for i, a in enumerate(nums):\n\n            if i>0 and nums[i] == nums[i-1]:\n                continue\n\n            l, r = i+1, len(nums)-1\n            while l<r:\n                total = a + nums[l] + nums[r]\n\n                if total > 0:\n                    r = r-1\n                elif total < 0:\n                    l = l+1\n                else:\n                    res.append([a, nums[l], nums[r]])\n                    r = r-1\n                    l = l+1\n\n                    while l < r and nums[l] == nums[l-1]:\n                        l += 1\n\n        return res\n"
+    }
+  ],
+  [
+    {
+      "id": "51. N-queens",
+      "code": "class Solution:\n    def solveNQueens(self, n: int) -> List[List[str]]:\n        res = []\n        board = [[\".\"] * n for i in range(n)]\n\n        def backtrack(r):\n            if r == n:\n                copy = [\"\".join(row) for row in board]\n                res.append(copy)\n                return\n\n            for c in range(n):\n                if self.isSafe(r, c, board):\n                    board[r][c] = 'Q'\n                    backtrack(r+1)\n                    board[r][c] = '.'\n\n        backtrack(0)\n        return res\n\n    def isSafe(self, r: int, c: int, board):\n        row = r - 1\n        while row >= 0:\n            if board[row][c] == \"Q\":\n                return False\n            row -= 1\n            \n        row, col = r - 1, c - 1\n        while row >= 0 and col >= 0:\n            if board[row][col] == \"Q\":\n                return False\n            row -= 1\n            col -= 1\n\n        row, col = r - 1, c + 1\n        while row >= 0 and col < len(board):\n            if board[row][col] == \"Q\":\n                return False\n            row -= 1\n            col += 1\n        return True\n"
+    }
+  ],
+  [
+    {
+      "id": "36. Valid Sudoku",
+      "code": "class Solution:\n    def isValidSudoku(self, board: List[List[str]]) -> bool:\n        rows = defaultdict(list)\n        cols = defaultdict(list)\n        rects = defaultdict(list)\n\n        R = len(board)\n        C = len(board[0])\n\n        for i in range(R):\n            for j in range(C):\n                if board[i][j] == \".\":\n                    continue\n\n                val = board[i][j]\n                if val in rows[i]:\n                    return False\n                rows[i].append(val)\n\n                if val in cols[j]:\n                    return False\n\n                cols[j].append(val)\n\n                if val in rects[(i//3, j//3)]:\n                    return False\n\n                rects[(i//3, j//3)].append(val)\n\n        return True\n"
     }
   ],
   [
@@ -51,6 +45,12 @@
     {
       "id": "Trie",
       "code": "class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.endOfWord = False\n\nclass PrefixTree:\n    def __init__(self):\n        self.root = TrieNode()\n\n    def insert(self, word: str) -> None:\n        cur = self.root\n        for c in word:\n            if c not in cur.children:\n                cur.children[c] = TrieNode()\n            cur = cur.children[c]\n        cur.endOfWord = True\n\n    def search(self, word: str) -> bool:\n        cur = self.root\n        for c in word:\n            if c not in cur.children:\n                return False\n            cur = cur.children[c]\n        return cur.endOfWord\n\n    def startsWith(self, prefix: str) -> bool:\n        cur = self.root\n        for c in prefix:\n            if c not in cur.children:\n                return False\n            cur = cur.children[c]\n        return True\n"
+    }
+  ],
+  [
+    {
+      "id": "703. Kth Largest Element in a Stream",
+      "code": "class Heap:\n    def __init__(self, nums):\n        self.nums = []\n        for n in nums:\n            self.insert(n)\n    \n    def pop(self):\n        if len(self.nums) == 0:\n            return None\n\n        if len(self.nums) == 1:\n            return self.nums.pop()\n\n        min = self.nums[0]\n        self.nums[0] = self.nums.pop()\n        self.swimDown(0)\n\n        return min\n\n    def insert(self, val):\n        self.nums.append(val)\n        last = len(self.nums) - 1\n        self.swimUp(last)\n\n    def swimUp(self, i):\n        parent = (i - 1) // 2\n\n        if i > 0 and self.nums[parent] > self.nums[i]:\n            self.nums[parent], self.nums[i] = self.nums[i], self.nums[parent]\n            self.swimUp(parent)\n    \n    def swimDown(self, i):\n        left = i * 2 + 1\n        right = i * 2 + 2\n        min = i\n\n        if left < len(self.nums) and self.nums[left] < self.nums[min]:\n            min = left\n\n        if right < len(self.nums) and self.nums[right] < self.nums[min]:\n            min = right\n        \n        if min != i:\n            self.nums[i], self.nums[min] = self.nums[min], self.nums[i]\n            self.swimDown(min)\n\n    def peek(self):\n        return self.nums[0]\n\nclass KthLargest:\n    def __init__(self, k: int, nums: List[int]):\n        self.nums = nums\n        self.heap = Heap(self.nums)\n        print(f\"{self.heap.nums}\")\n        self.cap = k\n\n    def add(self, val: int) -> int:\n        self.heap.insert(val)\n        while len(self.heap.nums) > self.cap:\n            self.heap.pop()\n\n        return self.heap.peek()\n"
     }
   ]
 ] 
