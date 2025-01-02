@@ -1,6 +1,12 @@
 [
   [
     {
+      "id": "207. Course Schedule",
+      "code": "class Solution:\n    def canFinish(self, numCourses, prerequisites):\n        indegree = [0] * numCourses\n        adj = [[] for i in range(numCourses)]\n        for src, dst in prerequisites:\n            indegree[dst] += 1\n            adj[src].append(dst)\n\n        q = deque()\n        for n in range(numCourses):\n            if indegree[n] == 0:\n                q.append(n)\n\n        finish = 0\n        while q:\n            node = q.popleft()\n            finish += 1\n            for nei in adj[node]:\n                indegree[nei] -= 1\n                if indegree[nei] == 0:\n                    q.append(nei)\n\n        return finish == numCourses\n"
+    }
+  ],
+  [
+    {
       "id": "200. Number of Islands",
       "code": "class Solution:\n    def numIslands(self, grid):\n        directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]\n        ROWS, COLS = len(grid), len(grid[0])\n        islands = 0\n\n        def dfs(r, c):\n            if min(c, r) < 0 or r >= ROWS or c >= COLS or grid[r][c] == \"0\":\n                return\n\n            grid[r][c] = \"0\"\n            for dr, dc in directions:\n                dfs(r + dr, c + dc)\n\n        for r in range(ROWS):\n            for c in range(COLS):\n                if grid[r][c] == \"1\":\n                    dfs(r, c)\n                    islands += 1\n\n        return islands\n"
     }
@@ -13,14 +19,14 @@
   ],
   [
     {
-      "id": "207. Course Schedule",
-      "code": "class Solution:\n    def canFinish(self, numCourses, prerequisites):\n        indegree = [0] * numCourses\n        adj = [[] for i in range(numCourses)]\n        for src, dst in prerequisites:\n            indegree[dst] += 1\n            adj[src].append(dst)\n\n        q = deque()\n        for n in range(numCourses):\n            if indegree[n] == 0:\n                q.append(n)\n\n        finish = 0\n        while q:\n            node = q.popleft()\n            finish += 1\n            for nei in adj[node]:\n                indegree[nei] -= 1\n                if indegree[nei] == 0:\n                    q.append(nei)\n\n        return finish == numCourses\n"
+      "id": "15. 3Sum",
+      "code": "class Solution:\n    def threeSum(self, nums):\n        res = []\n        nums.sort()\n\n        for i, a in enumerate(nums):\n\n            if i>0 and nums[i] == nums[i-1]:\n                continue\n\n            l, r = i+1, len(nums)-1\n            while l<r:\n                total = a + nums[l] + nums[r]\n\n                if total > 0:\n                    r = r-1\n                elif total < 0:\n                    l = l+1\n                else:\n                    res.append([a, nums[l], nums[r]])\n                    r = r-1\n                    l = l+1\n\n                    while l < r and nums[l] == nums[l-1]:\n                        l += 1\n\n        return res\n"
     }
   ],
   [
     {
-      "id": "15. 3Sum",
-      "code": "class Solution:\n    def threeSum(self, nums):\n        res = []\n        nums.sort()\n\n        for i, a in enumerate(nums):\n\n            if i>0 and nums[i] == nums[i-1]:\n                continue\n\n            l, r = i+1, len(nums)-1\n            while l<r:\n                total = a + nums[l] + nums[r]\n\n                if total > 0:\n                    r = r-1\n                elif total < 0:\n                    l = l+1\n                else:\n                    res.append([a, nums[l], nums[r]])\n                    r = r-1\n                    l = l+1\n\n                    while l < r and nums[l] == nums[l-1]:\n                        l += 1\n\n        return res\n"
+      "id": "703. Kth Largest Element in a Stream",
+      "code": "class Heap:\n    def __init__(self, nums):\n        self.nums = []\n        for n in nums:\n            self.insert(n)\n    \n    def pop(self):\n        if len(self.nums) == 0:\n            return None\n\n        if len(self.nums) == 1:\n            return self.nums.pop()\n\n        min = self.nums[0]\n        self.nums[0] = self.nums.pop()\n        self.swimDown(0)\n\n        return min\n\n    def insert(self, val):\n        self.nums.append(val)\n        last = len(self.nums) - 1\n        self.swimUp(last)\n\n    def swimUp(self, i):\n        parent = (i - 1) // 2\n\n        if i > 0 and self.nums[parent] > self.nums[i]:\n            self.nums[parent], self.nums[i] = self.nums[i], self.nums[parent]\n            self.swimUp(parent)\n    \n    def swimDown(self, i):\n        left = i * 2 + 1\n        right = i * 2 + 2\n        min = i\n\n        if left < len(self.nums) and self.nums[left] < self.nums[min]:\n            min = left\n\n        if right < len(self.nums) and self.nums[right] < self.nums[min]:\n            min = right\n        \n        if min != i:\n            self.nums[i], self.nums[min] = self.nums[min], self.nums[i]\n            self.swimDown(min)\n\n    def peek(self):\n        return self.nums[0]\n\nclass KthLargest:\n    def __init__(self, k: int, nums: List[int]):\n        self.nums = nums\n        self.heap = Heap(self.nums)\n        print(f\"{self.heap.nums}\")\n        self.cap = k\n\n    def add(self, val: int) -> int:\n        self.heap.insert(val)\n        while len(self.heap.nums) > self.cap:\n            self.heap.pop()\n\n        return self.heap.peek()\n"
     }
   ],
   [
@@ -31,26 +37,20 @@
   ],
   [
     {
-      "id": "36. Valid Sudoku",
-      "code": "class Solution:\n    def isValidSudoku(self, board: List[List[str]]) -> bool:\n        rows = defaultdict(list)\n        cols = defaultdict(list)\n        rects = defaultdict(list)\n\n        R = len(board)\n        C = len(board[0])\n\n        for i in range(R):\n            for j in range(C):\n                if board[i][j] == \".\":\n                    continue\n\n                val = board[i][j]\n                if val in rows[i]:\n                    return False\n                rows[i].append(val)\n\n                if val in cols[j]:\n                    return False\n\n                cols[j].append(val)\n\n                if val in rects[(i//3, j//3)]:\n                    return False\n\n                rects[(i//3, j//3)].append(val)\n\n        return True\n"
-    }
-  ],
-  [
-    {
-      "id": "Dijkstra",
-      "code": "import heapq\nimport collections\n\nclass Graph:\n    def __init__(self):\n        self.edges = collections.defaultdict(list)\n\n    def add_edge(self, u, v, weight):\n        self.edges[u].append((v, weight))\n\ndef dijkstra(graph, start):\n    # Initialize distances and priority queue\n    distances = {node: float('inf') for node in graph.edges}\n    distances[start] = 0\n    min_heap = [(0, start)]  # (distance, node)\n\n    while min_heap:\n        current_distance, current_node = heapq.heappop(min_heap)\n\n        # If a shorter path is already found, skip this node\n        if current_distance > distances[current_node]:\n            continue\n\n        # Update neighbors\n        for neighbor, weight in graph.edges.get(current_node, []):\n            distance = current_distance + weight\n\n            # Only consider this path if it's better\n            if distance < distances[neighbor]:\n                distances[neighbor] = distance\n                heapq.heappush(min_heap, (distance, neighbor))\n\n    return distances\n"
-    }
-  ],
-  [
-    {
       "id": "Trie",
       "code": "class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.endOfWord = False\n\nclass PrefixTree:\n    def __init__(self):\n        self.root = TrieNode()\n\n    def insert(self, word: str) -> None:\n        cur = self.root\n        for c in word:\n            if c not in cur.children:\n                cur.children[c] = TrieNode()\n            cur = cur.children[c]\n        cur.endOfWord = True\n\n    def search(self, word: str) -> bool:\n        cur = self.root\n        for c in word:\n            if c not in cur.children:\n                return False\n            cur = cur.children[c]\n        return cur.endOfWord\n\n    def startsWith(self, prefix: str) -> bool:\n        cur = self.root\n        for c in prefix:\n            if c not in cur.children:\n                return False\n            cur = cur.children[c]\n        return True\n"
     }
   ],
   [
     {
-      "id": "703. Kth Largest Element in a Stream",
-      "code": "class Heap:\n    def __init__(self, nums):\n        self.nums = []\n        for n in nums:\n            self.insert(n)\n    \n    def pop(self):\n        if len(self.nums) == 0:\n            return None\n\n        if len(self.nums) == 1:\n            return self.nums.pop()\n\n        min = self.nums[0]\n        self.nums[0] = self.nums.pop()\n        self.swimDown(0)\n\n        return min\n\n    def insert(self, val):\n        self.nums.append(val)\n        last = len(self.nums) - 1\n        self.swimUp(last)\n\n    def swimUp(self, i):\n        parent = (i - 1) // 2\n\n        if i > 0 and self.nums[parent] > self.nums[i]:\n            self.nums[parent], self.nums[i] = self.nums[i], self.nums[parent]\n            self.swimUp(parent)\n    \n    def swimDown(self, i):\n        left = i * 2 + 1\n        right = i * 2 + 2\n        min = i\n\n        if left < len(self.nums) and self.nums[left] < self.nums[min]:\n            min = left\n\n        if right < len(self.nums) and self.nums[right] < self.nums[min]:\n            min = right\n        \n        if min != i:\n            self.nums[i], self.nums[min] = self.nums[min], self.nums[i]\n            self.swimDown(min)\n\n    def peek(self):\n        return self.nums[0]\n\nclass KthLargest:\n    def __init__(self, k: int, nums: List[int]):\n        self.nums = nums\n        self.heap = Heap(self.nums)\n        print(f\"{self.heap.nums}\")\n        self.cap = k\n\n    def add(self, val: int) -> int:\n        self.heap.insert(val)\n        while len(self.heap.nums) > self.cap:\n            self.heap.pop()\n\n        return self.heap.peek()\n"
+      "id": "Dijkstra",
+      "code": "class Solution:\n    # Implementation for Dijkstra's shortest path algorithm\n    def shortestPath(self, n: int, edges: List[List[int]], src: int) -> Dict[int, int]:\n        adj = {}\n        for i in range(n):\n            adj[i] = []\n            \n        # s = src, d = dst, w = weight\n        for s, d, w in edges:\n            adj[s].append([d, w])\n\n        # Compute shortest paths\n        shortest = {}\n        minHeap = [[0, src]]\n        while minHeap:\n            w1, n1 = heapq.heappop(minHeap)\n            if n1 in shortest:\n                continue\n            shortest[n1] = w1\n\n            for n2, w2 in adj[n1]:\n                if n2 not in shortest:\n                    heapq.heappush(minHeap, [w1 + w2, n2])\n        \n        # Fill in missing nodes\n        for i in range(n):\n            if i not in shortest:\n                shortest[i] = -1\n\n        return shortest\n"
+    }
+  ],
+  [
+    {
+      "id": "36. Valid Sudoku",
+      "code": "class Solution:\n    def isValidSudoku(self, board: List[List[str]]) -> bool:\n        rows = defaultdict(list)\n        cols = defaultdict(list)\n        rects = defaultdict(list)\n\n        R = len(board)\n        C = len(board[0])\n\n        for i in range(R):\n            for j in range(C):\n                if board[i][j] == \".\":\n                    continue\n\n                val = board[i][j]\n                if val in rows[i]:\n                    return False\n                rows[i].append(val)\n\n                if val in cols[j]:\n                    return False\n\n                cols[j].append(val)\n\n                if val in rects[(i//3, j//3)]:\n                    return False\n\n                rects[(i//3, j//3)].append(val)\n\n        return True\n"
     }
   ]
-] 
+]
