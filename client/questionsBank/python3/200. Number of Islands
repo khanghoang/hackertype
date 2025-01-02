@@ -2,7 +2,7 @@ class Solution:
     def countPaths(self, grid):
         ROWS, COLS = len(grid), len(grid[0])
 
-        def helper(grid: List[List[int]], r: int, c: int, visit: set) -> int:
+        def helper(grid, r, c, visit) -> int:
             if (min(r, c) < 0 or
                 r == ROWS or c == COLS or
                 (r, c) in visit or grid[r][c] == 1):
