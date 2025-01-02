@@ -26,7 +26,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "yarn buildCodeFile && react-scripts build",
     "buildCodeFile": "node --experimental-strip-types ./buildCodeFile.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
