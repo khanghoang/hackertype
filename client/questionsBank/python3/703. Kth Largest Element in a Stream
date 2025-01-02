@@ -1,0 +1,62 @@
+class Heap:
+    def __init__(self, nums):
+        self.nums = []
+        for n in nums:
+            self.insert(n)
+    
+    def pop(self):
+        if len(self.nums) == 0:
+            return None
+
+        if len(self.nums) == 1:
+            return self.nums.pop()
+
+        min = self.nums[0]
+        self.nums[0] = self.nums.pop()
+        self.swimDown(0)
+
+        return min
+
+    def insert(self, val):
+        self.nums.append(val)
+        last = len(self.nums) - 1
+        self.swimUp(last)
+
+    def swimUp(self, i):
+        parent = (i - 1) // 2
+
+        if i > 0 and self.nums[parent] > self.nums[i]:
+            self.nums[parent], self.nums[i] = self.nums[i], self.nums[parent]
+            self.swimUp(parent)
+    
+    def swimDown(self, i):
+        left = i * 2 + 1
+        right = i * 2 + 2
+        min = i
+
+        if left < len(self.nums) and self.nums[left] < self.nums[min]:
+            min = left
+
+        if right < len(self.nums) and self.nums[right] < self.nums[min]:
+            min = right
+        
+        if min != i:
+            self.nums[i], self.nums[min] = self.nums[min], self.nums[i]
+            self.swimDown(min)
+
+    def peek(self):
+        return self.nums[0]
+
+class KthLargest:
+    def __init__(self, k: int, nums: List[int]):
+        self.nums = nums
+        self.heap = Heap(self.nums)
+        print(f"{self.heap.nums}")
+        self.cap = k
+
+    def add(self, val: int) -> int:
+        self.heap.insert(val)
+        while len(self.heap.nums) > self.cap:
+            self.heap.pop()
+
+        return self.heap.peek()

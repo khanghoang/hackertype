@@ -1,0 +1,41 @@
+class Solution:
+    def shortestPathBinaryMatrix(self, grid):
+
+        if not grid:
+            return -1
+
+        if grid[0][0] == 1 or grid[-1][-1] == 1:
+            return -1
+
+        rows = grid
+        cols = grid[0]
+        visit = set((0, 0))
+        queue = deque([(0, 0, 1)])
+
+        while queue:
+            i, j, step = queue.popleft()
+
+            if i == len(rows) - 1 and j == len(cols) - 1:
+                return step
+
+            options = [
+                [-1, -1], [-1, 0], [-1, 1],
+                [0, -1], [0, 1],
+                [1, -1], [1, 0], [1, 1]
+            ]
+
+            for opt in options:
+                dy, dx = opt
+                y = i + dy
+                x = j + dx
+
+                if (
+                    (y, x) not in visit
+                    and y in range(len(rows))
+                    and x in range(len(cols))
+                    and grid[y][x] == 0
+                ):
+                    queue.append((y, x, step + 1))
+                    visit.add((y, x))
+
+        return -1

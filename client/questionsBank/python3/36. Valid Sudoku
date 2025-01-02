@@ -1,18 +1,30 @@
 class Solution:
-  def isValidSudoku(self, board: List[List[str]]) -> bool:
-    seen = set()
+    def isValidSudoku(self, board: List[List[str]]) -> bool:
+        rows = defaultdict(list)
+        cols = defaultdict(list)
+        rects = defaultdict(list)
 
-    for i in range(9):
-      for j in range(9):
-        c = board[i][j]
-        if c == '.':
-          continue
-        if c + '@row ' + str(i) in seen or \
-           c + '@col ' + str(j) in seen or \
-           c + '@box ' + str(i // 3) + str(j // 3) in seen:
-          return False
-        seen.add(c + '@row ' + str(i))
-        seen.add(c + '@col ' + str(j))
-        seen.add(c + '@box ' + str(i // 3) + str(j // 3))
+        R = len(board)
+        C = len(board[0])
 
-    return True
+        for i in range(R):
+            for j in range(C):
+                if board[i][j] == ".":
+                    continue
+
+                val = board[i][j]
+                if val in rows[i]:
+                    return False
+                rows[i].append(val)
+
+                if val in cols[j]:
+                    return False
+
+                cols[j].append(val)
+
+                if val in cols[(i//3, j//3)]:
+                    return False
+
+                cols[(i//3, j//3)].append(val)
+
+        return True

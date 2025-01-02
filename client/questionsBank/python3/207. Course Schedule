@@ -1,31 +1,23 @@
-from enum import Enum
+class Solution:
+    def canFinish(self, numCourses, prerequisites):
+        indegree = [0] * numCourses
+        adj = [[] for i in range(numCourses)]
+        for src, dst in prerequisites:
+            indegree[dst] += 1
+            adj[src].append(dst)
 
+        q = deque()
+        for n in range(numCourses):
+            if indegree[n] == 0:
+                q.append(n)
 
- class State(Enum):
-  kInit = 0
-  kVisiting = 1
-  kVisited = 2
+        finish = 0
+        while q:
+            node = q.popleft()
+            finish += 1
+            for nei in adj[node]:
+                indegree[nei] -= 1
+                if indegree[nei] == 0:
+                    q.append(nei)
 
-
- class Solution:
-  def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
-    graph = [[] for _ in range(numCourses)]
-    state = [State.kInit] * numCourses
-
-    for a, b in prerequisites:
-      graph[b].append(a)
-
-    def hasCycle(u: int) -> bool:
-      if state[u] == State.kVisiting:
-        return True
-      if state[u] == State.kVisited:
-        return False
-
-      state[u] = State.kVisiting
-      if any(hasCycle(v) for v in graph[u]):
-        return True
-      state[u] = State.kVisited
-
-      return False
-
-    return not any(hasCycle(i) for i in range(numCourses))
+        return finish == numCourses
