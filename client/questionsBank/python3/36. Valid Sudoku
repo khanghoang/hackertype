@@ -22,9 +22,9 @@ class Solution:
 
                 cols[j].append(val)
 
-                if val in cols[(i//3, j//3)]:
+                if val in rects[(i//3, j//3)]:
                     return False
 
-                cols[(i//3, j//3)].append(val)
+                rects[(i//3, j//3)].append(val)
 
         return True

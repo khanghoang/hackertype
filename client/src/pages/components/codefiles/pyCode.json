@@ -1,20 +1,14 @@
 [
   [
     {
-      "id": "200. Number of Islands",
-      "code": "class Solution:\n    def countPaths(self, grid):\n        ROWS, COLS = len(grid), len(grid[0])\n\n        def helper(grid, r, c, visit) -> int:\n            if (min(r, c) < 0 or\n                r == ROWS or c == COLS or\n                (r, c) in visit or grid[r][c] == 1):\n                return 0\n            if r == ROWS - 1 and c == COLS - 1:\n                return 1\n\n            visit.add((r, c))\n\n            count = 0\n            count += helper(grid, r + 1, c, visit)\n            count += helper(grid, r - 1, c, visit)\n            count += helper(grid, r, c + 1, visit)\n            count += helper(grid, r, c - 1, visit)\n\n            visit.remove((r, c))\n            return count\n\n        return helper(grid, 0, 0, set())\n"
+      "id": "15. 3Sum",
+      "code": "class Solution:\n    def threeSum(self, nums):\n        res = []\n        nums.sort()\n\n        for i, a in enumerate(nums):\n\n            if i>0 and nums[i] == nums[i-1]:\n                continue\n\n            l, r = i+1, len(nums)-1\n            while l<r:\n                total = a + nums[l] + nums[r]\n\n                if total > 0:\n                    r = r-1\n                elif total < 0:\n                    l = l+1\n                else:\n                    res.append([a, nums[l], nums[r]])\n                    r = r-1\n                    l = l+1\n\n                    while l < r and nums[l] == nums[l-1]:\n                        l += 1\n\n        return res\n"
     }
   ],
   [
     {
       "id": "36. Valid Sudoku",
-      "code": "class Solution:\n    def isValidSudoku(self, board: List[List[str]]) -> bool:\n        rows = defaultdict(list)\n        cols = defaultdict(list)\n        rects = defaultdict(list)\n\n        R = len(board)\n        C = len(board[0])\n\n        for i in range(R):\n            for j in range(C):\n                if board[i][j] == \".\":\n                    continue\n\n                val = board[i][j]\n                if val in rows[i]:\n                    return False\n                rows[i].append(val)\n\n                if val in cols[j]:\n                    return False\n\n                cols[j].append(val)\n\n                if val in cols[(i//3, j//3)]:\n                    return False\n\n                cols[(i//3, j//3)].append(val)\n\n        return True\n"
-    }
-  ],
-  [
-    {
-      "id": "1091. Shortest Path in Binary Matrix",
-      "code": "class Solution:\n    def shortestPathBinaryMatrix(self, grid):\n\n        if not grid:\n            return -1\n\n        if grid[0][0] == 1 or grid[-1][-1] == 1:\n            return -1\n\n        rows = grid\n        cols = grid[0]\n        visit = set((0, 0))\n        queue = deque([(0, 0, 1)])\n\n        while queue:\n            i, j, step = queue.popleft()\n\n            if i == len(rows) - 1 and j == len(cols) - 1:\n                return step\n\n            options = [\n                [-1, -1], [-1, 0], [-1, 1],\n                [0, -1], [0, 1],\n                [1, -1], [1, 0], [1, 1]\n            ]\n\n            for opt in options:\n                dy, dx = opt\n                y = i + dy\n                x = j + dx\n\n                if (\n                    (y, x) not in visit\n                    and y in range(len(rows))\n                    and x in range(len(cols))\n                    and grid[y][x] == 0\n                ):\n                    queue.append((y, x, step + 1))\n                    visit.add((y, x))\n\n        return -1\n"
+      "code": "class Solution:\n    def isValidSudoku(self, board: List[List[str]]) -> bool:\n        rows = defaultdict(list)\n        cols = defaultdict(list)\n        rects = defaultdict(list)\n\n        R = len(board)\n        C = len(board[0])\n\n        for i in range(R):\n            for j in range(C):\n                if board[i][j] == \".\":\n                    continue\n\n                val = board[i][j]\n                if val in rows[i]:\n                    return False\n                rows[i].append(val)\n\n                if val in cols[j]:\n                    return False\n\n                cols[j].append(val)\n\n                if val in rects[(i//3, j//3)]:\n                    return False\n\n                rects[(i//3, j//3)].append(val)\n\n        return True\n"
     }
   ],
   [
@@ -31,8 +25,14 @@
   ],
   [
     {
-      "id": "15. 3Sum",
-      "code": "class Solution:\n    def threeSum(self, nums):\n        res = []\n        nums.sort()\n\n        for i, a in enumerate(nums):\n\n            if i>0 and nums[i] == nums[i-1]:\n                continue\n\n            l, r = i+1, len(nums)-1\n            while l<r:\n                total = a + nums[l] + nums[r]\n\n                if total > 0:\n                    r = r-1\n                elif total < 0:\n                    l = l+1\n                else:\n                    res.append([a, nums[l], nums[r]])\n                    r = r-1\n                    l = l+1\n\n                    while l < r and nums[l] == nums[l-1]:\n                        l += 1\n\n        return res\n"
+      "id": "200. Number of Islands",
+      "code": "class Solution:\n    def countPaths(self, grid):\n        ROWS, COLS = len(grid), len(grid[0])\n\n        def helper(grid, r, c, visit) -> int:\n            if (min(r, c) < 0 or\n                r == ROWS or c == COLS or\n                (r, c) in visit or grid[r][c] == 1):\n                return 0\n            if r == ROWS - 1 and c == COLS - 1:\n                return 1\n\n            visit.add((r, c))\n\n            count = 0\n            count += helper(grid, r + 1, c, visit)\n            count += helper(grid, r - 1, c, visit)\n            count += helper(grid, r, c + 1, visit)\n            count += helper(grid, r, c - 1, visit)\n\n            visit.remove((r, c))\n            return count\n\n        return helper(grid, 0, 0, set())\n"
+    }
+  ],
+  [
+    {
+      "id": "1091. Shortest Path in Binary Matrix",
+      "code": "class Solution:\n    def shortestPathBinaryMatrix(self, grid):\n\n        if not grid:\n            return -1\n\n        if grid[0][0] == 1 or grid[-1][-1] == 1:\n            return -1\n\n        rows = grid\n        cols = grid[0]\n        visit = set((0, 0))\n        queue = deque([(0, 0, 1)])\n\n        while queue:\n            i, j, step = queue.popleft()\n\n            if i == len(rows) - 1 and j == len(cols) - 1:\n                return step\n\n            options = [\n                [-1, -1], [-1, 0], [-1, 1],\n                [0, -1], [0, 1],\n                [1, -1], [1, 0], [1, 1]\n            ]\n\n            for opt in options:\n                dy, dx = opt\n                y = i + dy\n                x = j + dx\n\n                if (\n                    (y, x) not in visit\n                    and y in range(len(rows))\n                    and x in range(len(cols))\n                    and grid[y][x] == 0\n                ):\n                    queue.append((y, x, step + 1))\n                    visit.add((y, x))\n\n        return -1\n"
     }
   ],
   [
@@ -43,14 +43,14 @@
   ],
   [
     {
-      "id": "Trie",
-      "code": "class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.endOfWord = False\n\nclass PrefixTree:\n    def __init__(self):\n        self.root = TrieNode()\n\n    def insert(self, word: str) -> None:\n        cur = self.root\n        for c in word:\n            if c not in cur.children:\n                cur.children[c] = TrieNode()\n            cur = cur.children[c]\n        cur.endOfWord = True\n\n    def search(self, word: str) -> bool:\n        cur = self.root\n        for c in word:\n            if c not in cur.children:\n                return False\n            cur = cur.children[c]\n        return cur.endOfWord\n\n    def startsWith(self, prefix: str) -> bool:\n        cur = self.root\n        for c in prefix:\n            if c not in cur.children:\n                return False\n            cur = cur.children[c]\n        return True\n"
+      "id": "Dijkstra",
+      "code": "import heapq\nimport collections\n\nclass Graph:\n    def __init__(self):\n        self.edges = collections.defaultdict(list)\n\n    def add_edge(self, u, v, weight):\n        self.edges[u].append((v, weight))\n\ndef dijkstra(graph, start):\n    # Initialize distances and priority queue\n    distances = {node: float('inf') for node in graph.edges}\n    distances[start] = 0\n    min_heap = [(0, start)]  # (distance, node)\n\n    while min_heap:\n        current_distance, current_node = heapq.heappop(min_heap)\n\n        # If a shorter path is already found, skip this node\n        if current_distance > distances[current_node]:\n            continue\n\n        # Update neighbors\n        for neighbor, weight in graph.edges.get(current_node, []):\n            distance = current_distance + weight\n\n            # Only consider this path if it's better\n            if distance < distances[neighbor]:\n                distances[neighbor] = distance\n                heapq.heappush(min_heap, (distance, neighbor))\n\n    return distances\n"
     }
   ],
   [
     {
-      "id": "Dijkstra",
-      "code": "import heapq\nimport collections\n\nclass Graph:\n    def __init__(self):\n        self.edges = collections.defaultdict(list)\n\n    def add_edge(self, u, v, weight):\n        self.edges[u].append((v, weight))\n\ndef dijkstra(graph, start):\n    # Initialize distances and priority queue\n    distances = {node: float('inf') for node in graph.edges}\n    distances[start] = 0\n    min_heap = [(0, start)]  # (distance, node)\n\n    while min_heap:\n        current_distance, current_node = heapq.heappop(min_heap)\n\n        # If a shorter path is already found, skip this node\n        if current_distance > distances[current_node]:\n            continue\n\n        # Update neighbors\n        for neighbor, weight in graph.edges.get(current_node, []):\n            distance = current_distance + weight\n\n            # Only consider this path if it's better\n            if distance < distances[neighbor]:\n                distances[neighbor] = distance\n                heapq.heappush(min_heap, (distance, neighbor))\n\n    return distances\n"
+      "id": "Trie",
+      "code": "class TrieNode:\n    def __init__(self):\n        self.children = {}\n        self.endOfWord = False\n\nclass PrefixTree:\n    def __init__(self):\n        self.root = TrieNode()\n\n    def insert(self, word: str) -> None:\n        cur = self.root\n        for c in word:\n            if c not in cur.children:\n                cur.children[c] = TrieNode()\n            cur = cur.children[c]\n        cur.endOfWord = True\n\n    def search(self, word: str) -> bool:\n        cur = self.root\n        for c in word:\n            if c not in cur.children:\n                return False\n            cur = cur.children[c]\n        return cur.endOfWord\n\n    def startsWith(self, prefix: str) -> bool:\n        cur = self.root\n        for c in prefix:\n            if c not in cur.children:\n                return False\n            cur = cur.children[c]\n        return True\n"
     }
   ]
 ] 
